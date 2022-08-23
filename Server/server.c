@@ -11,10 +11,10 @@ void write_file(int sockfd)
 {
     int n;
     FILE *fp;
-    char *filename = "recv.txt";
+    //char *filename = "recv.txt";
     char buffer[SIZE];
 
-    fp = fopen(filename, "w");
+    //fp = fopen(filename, "w");
     while (1)
     {
         n = recv(sockfd, buffer, SIZE, 0);
@@ -23,8 +23,18 @@ void write_file(int sockfd)
             break;
             return;
         }
+
+        char numstr[10];
+        //itoa(file_counter, numstr, 10);
+        sprintf(numstr, "%d", file_counter);
+        char filename[] = "file";
+        strcat(filename, numstr);
+        strcat(filename, ".txt");
+        file_counter ++;
+        fp = fopen(filename, "w");
         fprintf(fp, "%s", buffer);
         bzero(buffer, SIZE);
+        fclose(fp);
     }
     return;
 }
