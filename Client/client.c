@@ -9,6 +9,7 @@ void send_file(FILE *fp, int sockfd){
   int n;
   char data[SIZE] = {0};
   char message[SIZE];
+  char buffer[SIZE];
  
   while(fgets(data, SIZE, fp) != NULL) {
     strcat(message, data);
@@ -18,6 +19,8 @@ void send_file(FILE *fp, int sockfd){
       exit(1);
     }
     bzero(message, SIZE);
+    recv(sockfd, buffer, SIZE, 0);
+    printf("%s", buffer);
 }
 
  
@@ -71,7 +74,6 @@ int main(){
       
       printf("filename es: %s", filename);
       int comparacion = strcmp("end", filename);
-      printf("Comparacion: %d", comparacion);
     
       if (!strcmp("end", filename))
       {

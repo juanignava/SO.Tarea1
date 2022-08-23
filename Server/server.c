@@ -2,10 +2,54 @@
 #include <stdlib.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <ctype.h>
 #define SIZE 1024
 
 int file_counter = 0;
 
+/**
+ * @brief This method reads a txt file and counts the number of consonants that it contains
+ * 
+ * @return int consonants_count: this is the number of consonants that the file contains
+ */
+int counter(char file_name[]){
+
+    FILE* ptr;
+    char ch;
+    int consonants_count = 0;
+
+    // Stores the content of the file.
+    ptr = fopen(file_name, "r");
+ 
+    if (NULL == ptr) {
+        printf("file can't be opened \n");
+    }
+  
+    while (!feof(ptr)) {
+
+        // Reads file content char by char
+        ch = fgetc(ptr);
+
+        // Converts character to lowercase
+        ch = tolower(ch);
+
+        // Checks if the character is a vowel (we need to check this first so the next)
+        if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') {
+        }
+
+        // Checks if the char is a consonant
+        else if ((ch >= 'a' && ch <= 'z')) {
+            ++ consonants_count;
+        }
+
+    }
+
+    printf("La cantidad de consonantes es: %d\n", consonants_count);
+    
+    fclose(ptr);
+    return consonants_count;
+
+}
 
 void write_file(int sockfd)
 {
@@ -35,6 +79,22 @@ void write_file(int sockfd)
         fprintf(fp, "%s", buffer);
         bzero(buffer, SIZE);
         fclose(fp);
+
+        int consonants = counter(filename);
+        char consonats_str[10];
+        sprintf(consonats_str, "%d", consonants);
+        
+        //itoa(consonants, consonats_str, 10);
+
+        char message[]= "\nAmount of consonants in file is: ";
+        strcat(message, consonats_str);
+        printf("prueba consonantes: %s\n", message);
+        //strcat(message, "\0");
+        if (send(sockfd, message, SIZE, 0) == -1) {
+            perror("[-]Error in sending file.");
+            exit(1);
+        }
+    
     }
     return;
 }
