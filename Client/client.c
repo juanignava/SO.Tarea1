@@ -29,7 +29,7 @@ int main(){
   FILE *fp;
 
   char specify[20];
-  printf("ip = 127.0.0.1 and port= 880;");
+  printf("\n[ip = 127.0.0.1 and port= 880]");
   printf("\nSpecify a different ip and port? (yes/no): ");
   scanf(" %s", specify);
 
@@ -41,11 +41,7 @@ int main(){
       printf("\nNew port: ");
       scanf(" %s", portstr);
       port = atoi(portstr);
-
   }
-
-
-  
 
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if(sockfd < 0) {
@@ -66,10 +62,8 @@ int main(){
   printf("[+]Connected to Server.\n");
   
   char filename[100];
-
   while (1)
   {
-      
       printf("\nType the file path or end to finish program: ");
       scanf(" %s", filename);
       
@@ -83,16 +77,14 @@ int main(){
         break;
       }
       
-      
-
       fp = fopen(filename, "r");
       if (fp == NULL) {
-        perror("[-]Error in reading file.");
+        perror("\n[-]Error in reading file.");
         continue;;
       }
     
       send_file(fp, sockfd);
-      printf("[+]File data sent successfully.\n");
+      printf("\n[+]File data sent successfully.\n");
   }
   
   
