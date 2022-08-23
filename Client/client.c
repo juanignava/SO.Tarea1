@@ -20,7 +20,7 @@ void send_file(FILE *fp, int sockfd){
 
  
 int main(){
-  char *ip = "127.0.0.1";
+  char ip[50] = "127.0.0.1";
   int port = 8080;
   int e;
  
@@ -28,15 +28,31 @@ int main(){
   struct sockaddr_in server_addr;
   FILE *fp;
 
+  char specify[20];
+  printf("ip = 127.0.0.1 and port= 880;");
+  printf("\nSpecify a different ip and port? (yes/no): ");
+  scanf(" %s", specify);
+
+  if (!strcmp("yes", specify))
+  {
+      printf("\nNew IP address: ");
+      scanf(" %s", ip);
+      char portstr[10];
+      printf("\nNew port: ");
+      scanf(" %s", portstr);
+      port = atoi(portstr);
+
+  }
+
 
   
 
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if(sockfd < 0) {
-    perror("[-]Error in socket");
+    perror("\n[-]Error in socket");
     exit(1);
   }
-  printf("[+]Server socket created successfully.\n");
+  printf("\n[+]Server socket created successfully.\n");
  
   server_addr.sin_family = AF_INET;
   server_addr.sin_port = port;
@@ -50,7 +66,6 @@ int main(){
   printf("[+]Connected to Server.\n");
   
   char filename[100];
-  char specify[20];
 
   while (1)
   {
@@ -68,9 +83,7 @@ int main(){
         break;
       }
       
-      //char *specify;
-      printf("\nSpecify a different ip and port? (yes/no): ");
-      scanf(" %s", specify);
+      
 
       fp = fopen(filename, "r");
       if (fp == NULL) {
