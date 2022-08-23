@@ -17,6 +17,7 @@ void send_file(FILE *fp, int sockfd){
     bzero(data, SIZE);
   }
 }
+
  
 int main(){
   char *ip = "127.0.0.1";
@@ -26,8 +27,10 @@ int main(){
   int sockfd;
   struct sockaddr_in server_addr;
   FILE *fp;
-  char *filename = "send.txt";
- 
+
+
+  
+
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if(sockfd < 0) {
     perror("[-]Error in socket");
@@ -44,18 +47,44 @@ int main(){
     perror("[-]Error in socket");
     exit(1);
   }
- printf("[+]Connected to Server.\n");
- 
-  fp = fopen(filename, "r");
-  if (fp == NULL) {
-    perror("[-]Error in reading file.");
-    exit(1);
+  printf("[+]Connected to Server.\n");
+  
+  char filename[100];
+  char specify[20];
+
+  while (1)
+  {
+      
+      printf("\nType the file path or end to finish program: ");
+      scanf(" %s", filename);
+      
+      printf("filename es: %s", filename);
+      int comparacion = strcmp("end", filename);
+      printf("Comparacion: %d", comparacion);
+    
+      if (!strcmp("end", filename))
+      {
+        printf("\nProcess ended by user.");
+        break;
+      }
+      
+      //char *specify;
+      printf("\nSpecify a different ip and port? (yes/no): ");
+      scanf(" %s", specify);
+
+      fp = fopen(filename, "r");
+      if (fp == NULL) {
+        perror("[-]Error in reading file.");
+        continue;;
+      }
+    
+      send_file(fp, sockfd);
+      printf("[+]File data sent successfully.\n");
   }
+  
+  
  
-  send_file(fp, sockfd);
-  printf("[+]File data sent successfully.\n");
- 
-  printf("[+]Closing the connection.\n");
+  printf("\n[+]Closing the connection.\n");
   close(sockfd);
  
   return 0;
