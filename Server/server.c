@@ -27,7 +27,7 @@ void write_file(int sockfd)
         char numstr[10];
         //itoa(file_counter, numstr, 10);
         sprintf(numstr, "%d", file_counter);
-        char filename[] = "file";
+        char filename[] = "f/file";
         strcat(filename, numstr);
         strcat(filename, ".txt");
         file_counter ++;
