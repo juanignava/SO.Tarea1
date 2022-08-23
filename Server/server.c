@@ -6,6 +6,9 @@
 #define SIZE 1024
 
 int file_counter = 0;
+int port;
+char *filefolder;
+char *filefolder_aux;
 
 /**
  * @brief This method reads a txt file and counts the number of consonants that it contains
@@ -21,6 +24,8 @@ int counter(char file_name[]){
     // Stores the content of the file.
     ptr = fopen(file_name, "r");
  
+    printf("file inside cointer: %s\n", file_name);
+
     if (NULL == ptr) {
         printf("file can't be opened \n");
     }
@@ -51,6 +56,27 @@ int counter(char file_name[]){
 
 }
 
+void update_config(){
+    FILE *config_file;
+    config_file = fopen("server-config.txt", "r");
+
+    if (config_file == NULL)
+    {
+        printf("Nose pudo abrir documento de configuracion");
+    }
+
+    char *line;
+    size_t len = 0;
+    getline(&line, &len, config_file);
+    getline(&line, &len, config_file);
+    port = atoi(line);
+
+    getline(&line, &len, config_file);
+    getline(&line, &len, config_file);
+    printf("Retrieved line: %s", line);
+    filefolder = line;
+}
+
 void write_file(int sockfd)
 {
     int n;
@@ -71,16 +97,24 @@ void write_file(int sockfd)
         char numstr[10];
         //itoa(file_counter, numstr, 10);
         sprintf(numstr, "%d", file_counter);
-        char filename[] = "f/file";
-        strcat(filename, numstr);
-        strcat(filename, ".txt");
+        
+        //char filename[] = "f/file";
+        char filename[] = "file";
+        //strcpy(filefolder_aux, filefolder);
+        
+        strcat(filefolder, filename);
+        printf("Folder a guadar archivos: %s\n", filefolder);
+        //strcpy(filename, filefolder);
+        strcat(filefolder, numstr);
+        strcat(filefolder, ".txt");
         file_counter ++;
-        fp = fopen(filename, "w");
+        printf(" archivos: %s\n", filefolder);
+        fp = fopen(filefolder, "w");
         fprintf(fp, "%s", buffer);
         bzero(buffer, SIZE);
         fclose(fp);
 
-        int consonants = counter(filename);
+        int consonants = counter(filefolder);
         char consonats_str[10];
         sprintf(consonats_str, "%d", consonants);
         
@@ -93,17 +127,24 @@ void write_file(int sockfd)
         if (send(sockfd, message, SIZE, 0) == -1) {
             perror("[-]Error in sending file.");
             exit(1);
+        
         }
+
+        update_config();
     
     }
     return;
 }
 
+
+
 int main()
 {
     char *ip = "127.0.0.1";
-    int port = 8080;
+    //int port = 8080;
     int e;
+    
+    update_config();
 
     int sockfd, new_sock;
     struct sockaddr_in server_addr, new_addr;
