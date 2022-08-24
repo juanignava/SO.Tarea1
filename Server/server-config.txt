@@ -1,4 +1,4 @@
 Port:
 8080
 Folder:
-f/
+/usr/bin/doc-server/f/
