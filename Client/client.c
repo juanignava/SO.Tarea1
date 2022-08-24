@@ -32,6 +32,7 @@ void send_file(FILE *fp, int sockfd){
       exit(1);
   }
 
+  printf("\n[+]File data sent successfully.\n");
   bzero(message, SIZE);
 
   // receive and print response from the server in console
@@ -48,18 +49,20 @@ void send_file_cycle(FILE *fp, int sockfd){
   char filename[100];
   while (1)
   {
+      // ask for the information needed
       printf("\nType the file path or end to finish program: ");
       scanf(" %s", filename);
       
-      printf("filename es: %s", filename);
       int comparacion = strcmp("end", filename);
     
+      // end is the word to end the client
       if (!strcmp("end", filename))
       {
         printf("\nProcess ended by user.");
         break;
       }
       
+      // ask again if file is not found
       fp = fopen(filename, "r");
       if (fp == NULL) {
         perror("\n[-]Error in reading file.");
@@ -67,7 +70,7 @@ void send_file_cycle(FILE *fp, int sockfd){
       }
     
       send_file(fp, sockfd);
-      printf("\n[+]File data sent successfully.\n");
+      
   }
 }
  

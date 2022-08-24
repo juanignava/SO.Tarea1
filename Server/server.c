@@ -11,9 +11,9 @@ char *filefolder;
 char *filefolder_aux;
 
 /**
- * @brief This method reads a txt file and counts the number of consonants that it contains
+ * This method reads a txt file and counts the number of consonants that it contains
  * 
- * @return int consonants_count: this is the number of consonants that the file contains
+ * returns int consonants_count: this is the number of consonants that the file contains
  */
 int counter(char file_name[]){
 
@@ -24,8 +24,6 @@ int counter(char file_name[]){
     // Stores the content of the file.
     ptr = fopen(file_name, "r");
  
-    printf("file inside cointer: %s\n", file_name);
-
     if (NULL == ptr) {
         printf("file can't be opened \n");
     }
@@ -48,23 +46,30 @@ int counter(char file_name[]){
         }
 
     }
-
-    printf("La cantidad de consonantes es: %d\n", consonants_count);
     
     fclose(ptr);
     return consonants_count;
 
 }
 
+
+/**
+ * This method updates the valus of port and folder where
+ * the received files will be saved
+ * 
+ * The information will be located in server-config.txt
+ */
 void update_config(){
     FILE *config_file;
     config_file = fopen("server-config.txt", "r");
 
     if (config_file == NULL)
     {
-        printf("Nose pudo abrir documento de configuracion");
+        printf("Error opening the configuration file \n");
+        exit(1);
     }
 
+    // read the important lines from the files and save the information
     char *line;
     size_t len = 0;
     getline(&line, &len, config_file);
@@ -73,20 +78,24 @@ void update_config(){
 
     getline(&line, &len, config_file);
     getline(&line, &len, config_file);
-    printf("Retrieved line: %s", line);
     filefolder = line;
 }
 
+
+/**
+ * This method saves the received file in the respective
+ * direction
+ */
 void write_file(int sockfd)
 {
     int n;
     FILE *fp;
-    //char *filename = "recv.txt";
     char buffer[SIZE];
 
-    //fp = fopen(filename, "w");
+    // This cycle keeps receiving files 
     while (1)
     {
+        // the cycle ends when when there is an error with the socket
         n = recv(sockfd, buffer, SIZE, 0);
         if (n <= 0)
         {
@@ -94,42 +103,36 @@ void write_file(int sockfd)
             return;
         }
 
+        // create file path
         char numstr[10];
-        //itoa(file_counter, numstr, 10);
         sprintf(numstr, "%d", file_counter);
-        
-        //char filename[] = "f/file";
         char filename[] = "file";
-        //strcpy(filefolder_aux, filefolder);
-        
         strcat(filefolder, filename);
-        printf("Folder a guadar archivos: %s\n", filefolder);
-        //strcpy(filename, filefolder);
         strcat(filefolder, numstr);
         strcat(filefolder, ".txt");
         file_counter ++;
-        printf(" archivos: %s\n", filefolder);
+
+        // open file and save it        
         fp = fopen(filefolder, "w");
         fprintf(fp, "%s", buffer);
         bzero(buffer, SIZE);
         fclose(fp);
 
+        // calculate the amount of consonants
         int consonants = counter(filefolder);
         char consonats_str[10];
         sprintf(consonats_str, "%d", consonants);
         
-        //itoa(consonants, consonats_str, 10);
-
+        // send the amount of consonants as a message to the client
         char message[]= "\nAmount of consonants in file is: ";
         strcat(message, consonats_str);
-        printf("prueba consonantes: %s\n", message);
-        //strcat(message, "\0");
         if (send(sockfd, message, SIZE, 0) == -1) {
             perror("[-]Error in sending file.");
             exit(1);
         
         }
 
+        // update with config file info
         update_config();
     
     }
@@ -141,11 +144,12 @@ void write_file(int sockfd)
 int main()
 {
     char *ip = "127.0.0.1";
-    //int port = 8080;
     int e;
     
+    // update configuration file
     update_config();
 
+    // start the server
     int sockfd, new_sock;
     struct sockaddr_in server_addr, new_addr;
     socklen_t addr_size;
@@ -163,12 +167,14 @@ int main()
     server_addr.sin_port = port;
     server_addr.sin_addr.s_addr = inet_addr(ip);
 
+    // connect to client
     e = bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr));
     if (e < 0)
     {
         perror("[-]Error in bind");
         exit(1);
     }
+
     printf("[+]Binding successfull.\n");
 
     if (listen(sockfd, 10) == 0)
@@ -181,6 +187,7 @@ int main()
         exit(1);
     }
 
+    // begin communication with client
     addr_size = sizeof(new_addr);
     new_sock = accept(sockfd, (struct sockaddr *)&new_addr, &addr_size);
     write_file(new_sock);
