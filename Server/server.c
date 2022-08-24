@@ -81,7 +81,6 @@ void update_config(){
     filefolder = line;
 }
 
-
 /**
  * This method saves the received file in the respective
  * direction
