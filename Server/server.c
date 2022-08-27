@@ -195,6 +195,7 @@ int main()
     addr_size = sizeof(new_addr);
     new_sock = accept(sockfd, (struct sockaddr *)&new_addr, &addr_size);
     docs_log("[+]Connection accepted\n");
+    system("sudo strace -c -p $(pidod server) -o ~/Documents/docserver");
     write_file(new_sock);
     docs_log("[+]Data written in the file successfully.\n");
 

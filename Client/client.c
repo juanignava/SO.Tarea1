@@ -12,16 +12,22 @@ as a string
 fp -> file to transfer
 sockfd -> instance of the socket
 */ 
-void send_file(FILE *fp, int sockfd){
+void send_file(FILE *fp, int sockfd, int end){
 
   // message variables
   char data[SIZE] = {0};
   char message[SIZE];
   char buffer[SIZE];
+
+  memset(buffer, 0, sizeof(buffer));
+  memset(message, 0, sizeof(message));
  
-  // generate the message line by line from the file
-  while(fgets(data, SIZE, fp) != NULL) {
-    strcat(message, data);
+  if(end) strcat(message, "end");
+  else {
+    // generate the message line by line from the file
+    while(fgets(data, SIZE, fp) != NULL) {
+      strcat(message, data);
+    }
   }
 
   // try to send the file 
@@ -69,7 +75,7 @@ void send_file_cycle(FILE *fp, int sockfd){
         continue;;
       }
     
-      send_file(fp, sockfd);
+      send_file(fp, sockfd, 0);
       
   }
 }
