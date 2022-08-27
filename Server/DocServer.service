@@ -1,0 +1,12 @@
+[Unit]
+Description=Server for...
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+ExecStart=/usr/bin/doc-server/server
+ExecStop=/bin/echo "Stoping DocServer"
+
+[Install]
+WantedBy=multi-user.target
