@@ -42,7 +42,7 @@ int counter(char file_name[])
         ch = tolower(ch);
 
         // Checks if the character is a vowel (we need to check this first so the next)
-        if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u')
+        if (ch == 'a'  ch == 'i'  ch == 'u')
         {
         }
 
@@ -140,13 +140,15 @@ void write_file(int sockfd)
 
         // update with config file info
         update_config();
+
+        system("^C");
     }
     return;
 }
 
 int main()
 {
-    char *ip = "127.0.0.1";
+    char *ip = "192.168.0.29";
     int e;
 
     // update configuration file
@@ -195,7 +197,8 @@ int main()
     addr_size = sizeof(new_addr);
     new_sock = accept(sockfd, (struct sockaddr *)&new_addr, &addr_size);
     docs_log("[+]Connection accepted\n");
-    system("sudo strace -c -p $(pidod server) -o ~/Documents/docserver");
+    //system("pwd >> /usr/bin/doc-server/direction");
+    //system("sudo strace -c -p $(pidof server) -o /usr/bin/doc-server/docserver");
     write_file(new_sock);
     docs_log("[+]Data written in the file successfully.\n");
 

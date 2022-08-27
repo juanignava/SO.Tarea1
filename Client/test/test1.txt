@@ -1,0 +1,4 @@
+Este es un archivo de texto de prueba para comprobar
+el correcto funcionamiento del sistema. Si llega
+a estar guardado en el servidor, entonces todo salio
+bien por el momento.
